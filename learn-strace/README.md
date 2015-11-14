@@ -67,3 +67,24 @@ exit_group(12)                          = ?
 +++ exited with 12 +++
 ```
 
+We can have a quick brief look at the output log.
+* `execve("./trace_me", ["./trace_me"], ...)` is called. It accepts the
+arguments, environment variables to set up the program.
+* Then it tries to map the useful files into the memory using `mmap(2)`.
+* Then the standard C libraries are connected (see
+  `open("/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC)`) and read. More
+  contents of files are mapped into the memory.
+* Finally the program starts with `write(1, "hello world\n", 12)`.
+  `1` is the file descriptor to write to, which is standard output stream here.
+  The `hello world` after `"hello world\n", 12` is the output of the program.
+* All threads and the process exit by `exit_group()`.
+
+Besides, if we want to trace a running process, we can use
+```
+sudo strace -o /tmp/strace.out -s 2000 -fp 1234
+```
+
+`1234` is the PID of the process we want to trace. More generally, we can use
+```
+sudo strace -o /tmp/strace.out -s 2000 -fp `pgrep PROCESS_NAME`
+```
