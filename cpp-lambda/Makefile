@@ -6,10 +6,10 @@ CC_FLAGS := -std=c++11
 
 build: ${OUT_FILES}
 
-%.out: $(OBJ_FILES)
+obj/%.out: %.o
 	   g++ $(LD_FLAGS) -o $@ $<
 
-obj/%.o: %.cpp
+%.o: %.cpp
 	   g++ $(CC_FLAGS) -c -o $@ $<
 
 clean:
